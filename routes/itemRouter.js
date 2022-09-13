@@ -1,9 +1,13 @@
 import express from "express";
-import { getAllItems, getItemById, deleteItemById, updateItemById, createNewItems } 
-from "./itemHelper.js";
+import { getAllItems, getItemById, deleteItemById, updateItemById, createNewItems } from 
+"./Helper.js";
+import Auth from "../Middleware/auth.js";
+
+
 const router =express.Router();
 
-router.get('/', async function (request, response) {
+
+router.get('/',Auth, async function (request, response) {
     
     if(request.query.rating){
       request.query.rating = +request.query.rating;
@@ -12,16 +16,16 @@ router.get('/', async function (request, response) {
     response.send(items);
     })
   
-  router.get('/:id', async function (req, res) {
+  router.get('/:id',Auth, async function (req, res) {
   const {id} = req.params;
   console.log("id is : ", id);
         
   const item= await getItemById(id);
   console.log(item);
-  movie?res.send(item):res.status(404).send({msg:"item not found"});
+  item?res.send(item):res.status(404).send({msg:"item not found"});
     })
   
-    router.delete('/:id', async function (req, res) {
+    router.delete('/:id',Auth,async function (req, res) {
       const {id} = req.params;
             
       const result= await deleteItemById(id);
@@ -29,7 +33,7 @@ router.get('/', async function (request, response) {
       res.status(404).send({msg:"item not found"});
         })
   
-  router.put('/:id', async function (req, res) {
+  router.put('/:id',Auth, async function (req, res) {
     const {id} = req.params;
     const data=req.body;
           
@@ -37,12 +41,10 @@ router.get('/', async function (request, response) {
     res.send(result);
       })
   
-  // express.json() is a inbuilt middleware to convert data inside body to json format.
-  router.post('/',async function (req, res) {
+  
+  router.post('/',Auth,async function (req, res) {
     const data=req.body;
-    console.log(data)
-    
-    //db.movies.insertMany(data);
+    console.log(data)  
     const result=await createNewItems(data);
       res.send(result);
       console.log(result)
