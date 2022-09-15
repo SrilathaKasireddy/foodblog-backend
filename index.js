@@ -1,4 +1,5 @@
 import { itemsRouter } from "./routes/itemRouter.js";
+import { commentsRouter } from "./routes/commentRouter.js";
 import express from 'express';
 import { MongoClient } from 'mongodb';
 import dotenv from "dotenv";
@@ -9,7 +10,9 @@ import nodemailer from "nodemailer";
 import randomstring from 'randomstring';
 import {createUser,getUserByName,getUserByEmail,getUserById} from
  "./routes/Helper.js";
+ 
 import { ObjectId } from "mongodb";
+
 
 dotenv.config();
 const app = express()
@@ -32,6 +35,8 @@ app.get('/', function (request, response) {
 
 
 app.use("/items",itemsRouter)
+app.use("/comments",commentsRouter)
+
 
 
 app.listen(PORT, () => console.log(`App started in ${PORT}`));

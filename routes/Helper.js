@@ -57,3 +57,30 @@ export async function getUserByEmail(Email) {
 
 
 
+export async function createNewComments(data) {
+    return await client
+        .db("Comments")
+        .collection("Comments").
+        insertMany([data]);
+}
+export async function updateCommentById(id, data) {
+    return await client
+        .db("Comments")
+        .collection("Comments")
+        .updateOne({ _id: ObjectId(id) }, { $set: data });
+}
+export async function deleteCommentById(id) {
+    return await client.db("Comments")
+        .collection("Comments")
+        .deleteOne({ _id: ObjectId(id) });
+}
+export async function getCommentById(id) {
+    return await client.db("Comments")
+        .collection("Comments")
+        .findOne({ _id: ObjectId(id) });
+}
+export async function getAllComments(request) {
+    return await client.db("Comments")
+        .collection("Comments")
+        .find(request.query).toArray();
+}
