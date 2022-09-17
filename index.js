@@ -14,6 +14,7 @@ import { createUser,
   "./routes/Helper.js";
 
 import { ObjectId } from "mongodb";
+import Auth from "./Middleware/auth.js";
 
 
 dotenv.config();
@@ -30,11 +31,6 @@ async function createConnection() {
   return client;
 }
 export const client = await createConnection();
-app.get('/', function (request, response) {
-  response.send("Hello world")
-})
-
-
 
 app.use("/items", itemsRouter)
 app.use("/comments", commentsRouter)
@@ -48,25 +44,12 @@ app.listen(PORT, () => console.log(`App started in ${PORT}`));
 
 
 
-
-
-
-
-
-
-
 async function generateHashedPassword(password) {
   const NO_OF_ROUNDS = 10; //Number of rounds of salting
   const salt = await bcrypt.genSalt(NO_OF_ROUNDS);
   const hashedPassword = await bcrypt.hash(password, salt);
   return hashedPassword;
 }
-
-
-
-
-
-
 
 app.post('/signup', async function (request, response) {
   const { UserName, Email, Password } = request.body;
@@ -90,6 +73,7 @@ app.post('/signup', async function (request, response) {
 app.post('/login', async function (request, response) {
   const { UserName, Password } = request.body;
   const userFromDB = await getUserByName(UserName);
+  
 
   if (!userFromDB) {
     response.status(400).send({ message: "Invalid Credential" });
@@ -99,7 +83,8 @@ app.post('/login', async function (request, response) {
     const storedPassword = userFromDB.Password;
     const isPasswordMatch = await bcrypt.compare(Password, storedPassword);
     if (isPasswordMatch) {
-      const token = jwt.sign({ id: userFromDB._id, UserName: UserName }, process.env.SECRET_KEY);
+      const token = jwt.sign({ id: userFromDB._id, UserName: UserName }, 
+        process.env.SECRET_KEY);
       response.send({ message: "successful login", token: token });
       console.log(userFromDB)
       // localStorage.setItem("currentUser",UserName);
@@ -107,9 +92,14 @@ app.post('/login', async function (request, response) {
     else {
       response.status(400).send({ message: "Invalid Credential" });
     }
+  
 
   }
 })
+
+
+
+
 app.post('/forgetPassword', async function (request, response) {
   const { Email } = request.body;
   const userFromDB = await getUserByEmail(Email);
@@ -187,6 +177,7 @@ app.post('/verifyToken', async function (request, response) {
       message: "Something went wrong!"
     })
   }
+  
 });
 
 app.put('/changePassword', async function (request, response) {
