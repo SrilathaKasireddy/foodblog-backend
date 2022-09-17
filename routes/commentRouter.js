@@ -9,7 +9,7 @@ import Auth from "../Middleware/auth.js";
 const router =express.Router();
 
 
-router.get('/', async function
+router.get('/', Auth,async function
  (request, response) {
     
     
@@ -17,7 +17,7 @@ router.get('/', async function
     response.send(comments);
     })
   
-  router.get('/:id', async function (req, res) {
+  router.get('/:id',Auth, async function (req, res) {
   const {id} = req.params;
   console.log("id is : ", id);
         
@@ -26,7 +26,7 @@ router.get('/', async function
   item?res.send(item):res.status(404).send({msg:"item not found"});
     })
   
-    router.delete('/:id',async function (req, res) {
+    router.delete('/:id',Auth,async function (req, res) {
       const {id} = req.params;
             
       const result= await deleteCommentById(id);
@@ -34,7 +34,7 @@ router.get('/', async function
       res.status(404).send({msg:"item not found"});
         })
   
-  router.put('/:id', async function (req, res) {
+  router.put('/:id', Auth,async function (req, res) {
     const {id} = req.params;
     const data=req.body;
           
@@ -43,7 +43,7 @@ router.get('/', async function
       })
   
   
-  router.post('/',async function (req, res) {
+  router.post('/',Auth,async function (req, res) {
     const data=req.body;
     console.log(data)  
     const result=await createNewComments(data);
