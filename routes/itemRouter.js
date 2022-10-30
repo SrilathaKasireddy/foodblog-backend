@@ -12,9 +12,7 @@ const router =express.Router();
 router.get('/',Auth, async function
  (request, response) {
     
-    if(request.query.rating){
-      request.query.rating = +request.query.rating;
-    }
+    
     const items= await getAllItems(request);
     response.send(items);
     })
